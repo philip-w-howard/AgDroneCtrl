@@ -1,0 +1,7 @@
+c:\users\philhow\documents\visual studio 2013\Projects\AgDroneCmd\AgDroneCmd\bin\Debug\AgDroneCmd.exe.config
+c:\users\philhow\documents\visual studio 2013\Projects\AgDroneCmd\AgDroneCmd\obj\Debug\AgDroneCmd.csprojResolveAssemblyReference.cache
+c:\users\philhow\documents\visual studio 2013\Projects\AgDroneCmd\AgDroneCmd\bin\Debug\AgDroneCmd.exe
+c:\users\philhow\documents\visual studio 2013\Projects\AgDroneCmd\AgDroneCmd\bin\Debug\AgDroneCmd.pdb
+c:\users\philhow\documents\visual studio 2013\Projects\AgDroneCmd\AgDroneCmd\obj\Debug\AgDroneCmd.exe
+c:\users\philhow\documents\visual studio 2013\Projects\AgDroneCmd\AgDroneCmd\obj\Debug\AgDroneCmd.pdb
+C:\Users\philhow\Documents\Visual Studio 2013\Projects\AgDroneCmd\AgDroneCmd\bin\Debug\AgDroneCtrl.exe.config

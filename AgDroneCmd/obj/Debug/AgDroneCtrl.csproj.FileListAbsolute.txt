@@ -1,0 +1,5 @@
+C:\Users\philhow\Documents\Visual Studio 2013\Projects\AgDroneCmd\AgDroneCmd\bin\Debug\AgDroneCtrl.exe.config
+C:\Users\philhow\Documents\Visual Studio 2013\Projects\AgDroneCmd\AgDroneCmd\bin\Debug\AgDroneCtrl.exe
+C:\Users\philhow\Documents\Visual Studio 2013\Projects\AgDroneCmd\AgDroneCmd\bin\Debug\AgDroneCtrl.pdb
+C:\Users\philhow\Documents\Visual Studio 2013\Projects\AgDroneCmd\AgDroneCmd\obj\Debug\AgDroneCtrl.exe
+C:\Users\philhow\Documents\Visual Studio 2013\Projects\AgDroneCmd\AgDroneCmd\obj\Debug\AgDroneCtrl.pdb
