@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace AgDroneCtrl
 {
-    public class Command
+    public abstract class Command
     {
         public Command(string cmd)
         {
@@ -29,14 +29,7 @@ namespace AgDroneCtrl
             m_Thread.Join();
         }
 
-        protected void Process()
-        {
-            while (true)
-            {
-                Console.WriteLine("processing {0}", m_cmd);
-                Thread.Sleep(1000);
-            }
-        }
+        abstract protected void Process();
 
         protected Thread m_Thread;
         protected string m_cmd;

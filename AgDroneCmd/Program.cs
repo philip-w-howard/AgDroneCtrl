@@ -13,30 +13,44 @@ namespace AgDroneCmd
 {
     class Program
     {
+        const String SOCKET_ADDR = "192.168.2.6";       // WiFi mode
+        //const String SOCKET_ADDR = "192.168.42.1";     // AP mode
+        const int SOCKET_PORT = 2003;
+
         static void Main(string[] args)
         {
+            char[] DELIMS = { ' ', '\n', '\r' };
             bool quit = false;
-            string command = "";
+            String command = "";
             Command cmd = null;
 
             System.Net.Sockets.TcpClient clientSocket = new System.Net.Sockets.TcpClient();
-            //clientSocket.Connect("192.168.2.6", 2003);
-            //clientSocket.Connect("192.168.42.1", 2003);
+            clientSocket.Connect(SOCKET_ADDR, SOCKET_PORT);
 
-            //NetworkStream serverStream = clientSocket.GetStream();
-            
-            while (command != "quit")
+            NetworkStream serverStream = clientSocket.GetStream();
+
+            Console.Write("Cmd> ");
+            command = Console.ReadLine();
+            while (command != null && !command.Equals("quit", StringComparison.OrdinalIgnoreCase))
             {
+                String[] command_words = command.Split(DELIMS);
+                if (command_words.Length > 0)
+                {
+                    if (command_words[0].Equals("loglist", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (cmd != null) cmd.Abort();
+                        cmd = new LogListCmd(command, serverStream);
+                    }
+                    else 
+                    {
+                        Console.WriteLine("Unrecognized command");
+                    }
+                }
+                Console.Write("Cmd> ");
                 command = Console.ReadLine();
-
-                if (cmd != null) cmd.Abort();
-
-                cmd = new Command(command);
-
-                //byte[] outStream = System.Text.Encoding.ASCII.GetBytes(command + "\n");
-                //serverStream.Write(outStream, 0, outStream.Length);
-                //serverStream.Flush();
             }
+
+            if (cmd != null) cmd.Abort();
         }
     }
 }
