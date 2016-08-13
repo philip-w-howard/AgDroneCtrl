@@ -13,15 +13,23 @@ namespace AgDroneCtrl
         public LogListCmd(string cmd, NetworkStream socket)
             : base(cmd, socket)
         {
-            m_socket = socket;
+            m_expected_duration = 10;
+            m_entries = new List<LogEntry>();
         }
 
         protected override void Process()
         {
             String line = "";
+            char[] DELIMS = { ' ', '\n', '\r' };
+            byte[] outString;
 
-            byte[] outStream = System.Text.Encoding.ASCII.GetBytes("loglist\n");
-            m_socket.Write(outStream, 0, outStream.Length);
+            String[] command_words = m_cmd.Split(DELIMS);
+            if (command_words.Length > 1)
+                outString = System.Text.Encoding.ASCII.GetBytes("loglist" + command_words[1] + "\n");
+            else
+                outString = System.Text.Encoding.ASCII.GetBytes("loglist\n");
+
+            m_socket.Write(outString, 0, outString.Length);
             m_socket.Flush();
             
             line = ReadLine();
@@ -30,10 +38,43 @@ namespace AgDroneCtrl
             {
                 if (line.Length > 0)
                 Console.WriteLine(line);
+
+                String[] words = line.Split();
+                int entry;
+                long size;
+                long timestamp;
+
+                if (words.Length > 3)
+                {
+                    LogEntry log_entry = new LogEntry();
+                    log_entry.entry = int.Parse(words[1]);
+                    log_entry.size = long.Parse(words[2]);
+                    log_entry.timestamp = long.Parse(words[3]);
+                    
+                    m_entries.Add(log_entry);
+                }
                 line = ReadLine();
             }
         }
 
-        protected NetworkStream m_socket;
+        public int NumEntries()
+        {
+            return m_entries.Count;
+        }
+
+        public LogEntry GetEntry(int index)
+        {
+            if (index >= m_entries.Count) return null;
+            return m_entries[index];
+        }
+
+        public class LogEntry
+        {
+            public int entry;
+            public long size;
+            public long timestamp;
+        }
+
+        protected List<LogEntry> m_entries;
     }
 }

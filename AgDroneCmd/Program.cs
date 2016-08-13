@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 
 using System.Net.Sockets;
 using System.IO;
@@ -46,6 +47,12 @@ namespace AgDroneCmd
                         Console.WriteLine("Unrecognized command");
                     }
                 }
+                
+                while (!cmd.IsFinished() && !cmd.MayBeHung())
+                {
+                    Thread.Sleep(100);
+                }
+
                 Console.Write("Cmd> ");
                 command = Console.ReadLine();
             }

@@ -14,8 +14,16 @@ namespace AgDroneCtrl
         {
             m_cmd = cmd;
             m_socket = socket;
-            m_Thread = new Thread( new ThreadStart(Process));
+            
+            m_socket_buffer = new byte[1024 * 1024];
+            m_line_index = 0;
+            m_line_extent = 0;
+
+            m_Thread = new Thread(new ThreadStart(Process));
             m_Thread.Start();
+
+            m_start_time = DateTime.Now;
+            m_expected_duration = 2;    // default 2 second duration
 
             // Give the thread a chance to start up
             for (int ii=0; ii<1000; ii++)
@@ -24,9 +32,6 @@ namespace AgDroneCtrl
                 Thread.Sleep(1);
             }
 
-            m_socket_buffer = new byte[1024 * 1024];
-            m_line_index = 0;
-            m_line_extent = 0;
         }
 
         public void Abort()
@@ -37,6 +42,17 @@ namespace AgDroneCtrl
 
         abstract protected void Process();
 
+        public bool IsFinished()
+        {
+            return !m_Thread.IsAlive;
+        }
+
+        public bool MayBeHung()
+        {
+            TimeSpan duration = DateTime.Now.Subtract(m_start_time);
+
+            return duration.TotalSeconds > m_expected_duration;
+        }
         protected String ReadLine()
         {
             int size;
@@ -67,5 +83,7 @@ namespace AgDroneCtrl
         protected byte[] m_socket_buffer;
         protected int m_line_index;
         protected int m_line_extent;
+        protected DateTime m_start_time;
+        protected double m_expected_duration;   // in seconds
     }
 }
