@@ -67,6 +67,5 @@ namespace AgDroneCtrl
         protected byte[] m_socket_buffer;
         protected int m_line_index;
         protected int m_line_extent;
-
     }
 }
