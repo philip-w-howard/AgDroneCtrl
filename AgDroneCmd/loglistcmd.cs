@@ -11,20 +11,26 @@ namespace AgDroneCtrl
     public class LogListCmd : Command
     {
         public LogListCmd(string cmd, NetworkStream socket)
-            : base(cmd)
+            : base(cmd, socket)
         {
             m_socket = socket;
         }
 
         protected override void Process()
         {
+            String line = "";
+
             byte[] outStream = System.Text.Encoding.ASCII.GetBytes("loglist\n");
             m_socket.Write(outStream, 0, outStream.Length);
             m_socket.Flush();
-            while (true)
+            
+            line = ReadLine();
+
+            while (!line.Equals("LogEntryDone"))
             {
-                Console.WriteLine("processing {0}", m_cmd);
-                Thread.Sleep(1000);
+                if (line.Length > 0)
+                Console.WriteLine(line);
+                line = ReadLine();
             }
         }
 
