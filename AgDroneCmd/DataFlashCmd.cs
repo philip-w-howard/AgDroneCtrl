@@ -16,6 +16,12 @@ namespace AgDroneCtrl
             m_expected_duration = 10;
         }
 
+        public override void Abort()
+        {
+            if (m_log_entry != null) m_log_entry.Abort();
+            base.Abort();
+        }
+
         protected override void Process()
         {
             String line = "";

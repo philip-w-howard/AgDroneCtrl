@@ -34,7 +34,7 @@ namespace AgDroneCtrl
 
         }
 
-        public void Abort()
+        public virtual void Abort()
         {
             if (m_Thread != null) m_Thread.Abort();
             m_Thread.Join();

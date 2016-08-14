@@ -25,7 +25,7 @@ namespace AgDroneCtrl
 
             String[] command_words = m_cmd.Split(DELIMS);
             if (command_words.Length > 1)
-                outString = System.Text.Encoding.ASCII.GetBytes("loglist" + command_words[1] + "\n");
+                outString = System.Text.Encoding.ASCII.GetBytes("loglist " + command_words[1] + "\n");
             else
                 outString = System.Text.Encoding.ASCII.GetBytes("loglist\n");
 
