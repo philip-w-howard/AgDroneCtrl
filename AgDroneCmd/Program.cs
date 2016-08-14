@@ -42,6 +42,11 @@ namespace AgDroneCmd
                         if (cmd != null) cmd.Abort();
                         cmd = new LogListCmd(command, serverStream);
                     }
+                    else if (command_words[0].Equals("getlog", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (cmd != null) cmd.Abort();
+                        cmd = new DataFlashCmd(command, serverStream);
+                    }
                     else 
                     {
                         Console.WriteLine("Unrecognized command");
