@@ -15,6 +15,7 @@ namespace AgDroneCtrl
             : base(cmd, socket)
         {
             m_expected_duration = 60;
+            m_expectedSize = 1;
         }
 
         public override void Abort()
@@ -85,6 +86,7 @@ namespace AgDroneCtrl
                     {
                         fileSize += size;
                         file.Write(buffer, 0, size);
+                        Console.WriteLine("Received data {0} {1} {2}", size, fileSize, 100*fileSize/m_expectedSize);
                     }
                 }
             }
@@ -108,12 +110,18 @@ namespace AgDroneCtrl
                 Thread.Sleep(100);
             }
 
-            if (m_log_entry.IsFinished() && m_log_entry.NumEntries() > 0) return true;
+            if (m_log_entry.IsFinished() && m_log_entry.NumEntries() > 0)
+            {
+                m_expectedSize = m_log_entry.GetEntry(0).size;
+                if (m_expectedSize < 1) m_expectedSize = 1;
+                return true;
+            }
 
             return false;
         }
 
         protected LogListCmd m_log_entry;
+        protected long m_expectedSize;
     }
 }
 
