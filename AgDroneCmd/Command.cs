@@ -55,7 +55,6 @@ namespace AgDroneCtrl
         }
         protected String ReadLine()
         {
-            int size;
             String line = "";
             do
             {

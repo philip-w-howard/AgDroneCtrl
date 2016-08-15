@@ -21,7 +21,6 @@ namespace AgDroneCmd
         static void Main(string[] args)
         {
             char[] DELIMS = { ' ', '\n', '\r' };
-            bool quit = false;
             String command = "";
             Command cmd = null;
 

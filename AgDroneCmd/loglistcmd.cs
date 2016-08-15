@@ -40,9 +40,6 @@ namespace AgDroneCtrl
                 Console.WriteLine(line);
 
                 String[] words = line.Split();
-                int entry;
-                long size;
-                long timestamp;
 
                 if (words.Length > 3)
                 {
