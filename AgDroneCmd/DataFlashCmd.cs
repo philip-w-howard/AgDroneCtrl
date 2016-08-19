@@ -86,7 +86,8 @@ namespace AgDroneCtrl
                     {
                         fileSize += size;
                         file.Write(buffer, 0, size);
-                        Console.WriteLine("Received data {0} {1} {2}", size, fileSize, 100*fileSize/m_expectedSize);
+                        Console.Write("Received {0} bytes {1:F2}% of {2} bytes    \r", 
+                            fileSize, 100.0*fileSize/m_expectedSize, m_expectedSize);
                     }
                 }
             }
@@ -97,6 +98,7 @@ namespace AgDroneCtrl
             }
 
             file.Close();
+            Console.WriteLine("");
             Console.WriteLine("Wrote {0} bytes", fileSize);
         }
 
