@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Command.cs" />
     <Compile Include="DataFlashCmd.cs" />
+    <Compile Include="GetFile.cs" />
     <Compile Include="GetTLogsCmd.cs" />
     <Compile Include="LogListCmd.cs" />
     <Compile Include="Program.cs" />

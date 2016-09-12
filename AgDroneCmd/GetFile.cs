@@ -3,21 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Threading;
 using System.Net.Sockets;
 using System.IO;
 using System.Security.Cryptography;
 
 namespace AgDroneCtrl
 {
-    class GetTLogsCmd : Command
+    public class GetFile : Command
     {
-        public GetTLogsCmd(string cmd, NetworkStream socket)
+        public GetFile(string cmd, NetworkStream socket)
             : base(cmd, socket)
         {
             m_expected_duration = 60;
-            m_expectedSize = 1;
+            m_expectedSize = -1;
+            m_fileName = null;
         }
+
         public override void Abort()
         {
             base.Abort();
@@ -31,31 +32,31 @@ namespace AgDroneCtrl
 
             String line = "";
             char[] DELIMS = { ' ', '\n', '\r' };
-            byte[] outString;
+            String[] line_words = {""};
 
-            outString = System.Text.Encoding.ASCII.GetBytes("gettlogs\n");
+            Console.WriteLine("Attempting to get a file");
 
-            m_socket.Write(outString, 0, outString.Length);
-            m_socket.Flush();
-            
-            line = ReadLine();
-            String[] line_words = line.Split(DELIMS);
-
-            while (line_words.Length < 2 ||  !line_words[0].Equals("filesize"))
+            while (line_words.Length < 2 ||  m_expectedSize < 0 || m_fileName == null)
             {
-                Console.WriteLine("Read: {0}", line);
                 line = ReadLine();
+                Console.WriteLine("Read: {0}", line);
                 line_words = line.Split(DELIMS);
+                if (line_words[0].Equals("filesize"))
+                {
+                    m_expectedSize = Convert.ToInt32(line_words[1]);
+                }
+                else if (line_words[0].Equals("filename"))
+                {
+                    m_fileName = line_words[1];
+                }
             }
 
-            Console.WriteLine("File size is {0}", line_words[1]);
+            Console.WriteLine("Getting file {0} or size {1}", m_fileName, m_expectedSize);
 
             System.Net.Sockets.TcpClient dataSocket = new System.Net.Sockets.TcpClient();
             dataSocket.Connect(SOCKET_ADDR, SOCKET_PORT);
 
-            string path = String.Format("pixhawk_{0}.bin", 1234); // m_log_entry.GetEntry(0).timestamp);
-            Console.WriteLine("Creating file {0}", path);
-            FileStream fs = File.Open(path, FileMode.Create, FileAccess.Write, FileShare.None);
+            FileStream fs = File.Open(m_fileName, FileMode.Create, FileAccess.Write, FileShare.None);
             BinaryWriter file = new BinaryWriter(fs);
 
             long fileSize = 0;
@@ -88,12 +89,30 @@ namespace AgDroneCtrl
             Console.WriteLine("Wrote {0} bytes", fileSize);
 
             var sum = MD5.Create();
-            var stream = File.OpenRead(path);
-            Console.WriteLine("MD5 sum: {0}", sum.ComputeHash(stream));
+            var stream = File.OpenRead(m_fileName);
+            byte[] fileMD5Sum = sum.ComputeHash(stream);
+            string fileMD5String = System.Text.Encoding.UTF8.GetString(fileMD5Sum, 0, fileMD5Sum.Length);
+            Console.WriteLine("MD5 sum: {0}", fileMD5String);
 
+            while (line_words.Length < 2 || !line_words[0].Equals("md5sum"))
+            {
+                line = ReadLine();
+                Console.WriteLine("Read: {0}", line);
+                line_words = line.Split(DELIMS);
+            }
+
+            if (line_words[1].Equals(fileMD5String))
+            {
+                Console.WriteLine("File transfered successfullly");
+            }
+            else
+            {
+                Console.WriteLine("MD5 sums did not match");
+            }
         }
 
         protected long m_expectedSize;
+        protected String m_fileName;
 
     }
 }

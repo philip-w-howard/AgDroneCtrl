@@ -49,9 +49,18 @@ namespace AgDroneCtrl
 
             outString = System.Text.Encoding.ASCII.GetBytes("logdata " + command_words[1] + "\n");
 
+            Console.WriteLine("Sending logdata command: {0}", outString);
+
             m_socket.Write(outString, 0, outString.Length);
             m_socket.Flush();
-            
+
+            var getFile = new LogListCmd("", m_socket);
+            while (!getFile.IsFinished())
+            {
+                Thread.Sleep(100);
+            }
+
+            /*
             line = ReadLine();
             String[] line_words = line.Split(DELIMS);
 
@@ -100,6 +109,7 @@ namespace AgDroneCtrl
             file.Close();
             Console.WriteLine("");
             Console.WriteLine("Wrote {0} bytes", fileSize);
+            */
         }
 
         protected bool GetLogEntry(String id)
