@@ -51,7 +51,7 @@ namespace AgDroneCtrl
                 }
             }
 
-            Console.WriteLine("Getting file {0} or size {1}", m_fileName, m_expectedSize);
+            Console.WriteLine("Getting file {0} for size {1}", m_fileName, m_expectedSize);
 
             System.Net.Sockets.TcpClient dataSocket = new System.Net.Sockets.TcpClient();
             dataSocket.Connect(SOCKET_ADDR, SOCKET_PORT);
@@ -91,7 +91,7 @@ namespace AgDroneCtrl
             var sum = MD5.Create();
             var stream = File.OpenRead(m_fileName);
             byte[] fileMD5Sum = sum.ComputeHash(stream);
-            string fileMD5String = System.Text.Encoding.UTF8.GetString(fileMD5Sum, 0, fileMD5Sum.Length);
+            string fileMD5String = hashString(fileMD5Sum); // System.Text.Encoding.UTF8.GetString(fileMD5Sum, 0, fileMD5Sum.Length);
             Console.WriteLine("MD5 sum: {0}", fileMD5String);
 
             while (line_words.Length < 2 || !line_words[0].Equals("md5sum"))
@@ -108,9 +108,24 @@ namespace AgDroneCtrl
             else
             {
                 Console.WriteLine("MD5 sums did not match");
+                Console.WriteLine("net:  {0}", line_words[1]);
+                Console.WriteLine("file: {0}", fileMD5String);
             }
         }
 
+        protected String hashString(byte[] hash)
+        {
+            String result = "";
+            String byteVal;
+            foreach (byte val in hash)
+            {
+                byteVal = String.Format("{0:x2}", val);
+                    //Convert.ToString(val, 16);
+                result += byteVal;
+            }
+
+            return result;
+        }
         protected long m_expectedSize;
         protected String m_fileName;
 
