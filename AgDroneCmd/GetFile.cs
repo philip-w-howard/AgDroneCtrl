@@ -104,6 +104,7 @@ namespace AgDroneCtrl
             if (line_words[1].Equals(fileMD5String))
             {
                 Console.WriteLine("File transfered successfullly");
+                m_Success = true;
             }
             else
             {
@@ -126,8 +127,15 @@ namespace AgDroneCtrl
 
             return result;
         }
+
+        public bool Successful
+        {
+            get { return m_Success; }
+        }
+
         protected long m_expectedSize;
         protected String m_fileName;
+        protected bool m_Success = false;
 
     }
 }
