@@ -10,8 +10,8 @@ namespace AgDroneCtrl
 {
     class GetTLogsCmd : Command
     {
-        public GetTLogsCmd(string cmd, NetworkStream socket)
-            : base(cmd, socket)
+        public GetTLogsCmd(string cmd, ComStream agdrone)
+            : base(cmd, agdrone)
         {
             m_expected_duration = 60;
         }
@@ -24,33 +24,34 @@ namespace AgDroneCtrl
         {
             String line = "";
             char[] DELIMS = { ' ', '\n', '\r' };
-            byte[] outString;
 
-            outString = System.Text.Encoding.ASCII.GetBytes("gettlogs\n");
-
-            m_socket.Write(outString, 0, outString.Length);
-            m_socket.Flush();
+            m_agdrone.WriteString("gettlogs\n");
             
-            line = ReadLine();
+            line = m_agdrone.ReadLine();
             String[] line_words = line.Split(DELIMS);
 
             int numFiles = 0;
             int numFailures = 0;
-            while (line_words.Length < 2 ||  !line_words[0].Equals("tlogsdone"))
+            while (true)
             {
-                if (line_words[0].Equals("sendingfile"))
+                if (line_words.Length >= 1)
                 {
-                    var getFile = new GetFile("", m_socket);
-                    while (!getFile.IsFinished())
+                    if (line_words[0].Equals("tlogsdone")) 
+                        break;
+                    else if (line_words[0].Equals("sendingfile"))
                     {
-                        Thread.Sleep(100);
+                        var getFile = new GetFile("", m_agdrone);
+                        while (!getFile.IsFinished())
+                        {
+                            Thread.Sleep(100);
+                        }
+                        if (getFile.Successful)
+                            numFiles++;
+                        else
+                            numFailures++;
                     }
-                    if (getFile.Successful)
-                        numFiles++;
-                    else
-                        numFailures++;
                 }
-                line = ReadLine();
+                line = m_agdrone.ReadLine();
                 line_words = line.Split(DELIMS);
             }
 

@@ -11,8 +11,8 @@ namespace AgDroneCtrl
 {
     public class DataFlashCmd : Command
     {
-        public DataFlashCmd(string cmd, NetworkStream socket)
-            : base(cmd, socket)
+        public DataFlashCmd(string cmd, ComStream agdrone)
+            : base(cmd, agdrone)
         {
             m_expected_duration = 60;
             m_expectedSize = 1;
@@ -27,7 +27,6 @@ namespace AgDroneCtrl
         protected override void Process()
         {
             char[] DELIMS = { ' ', '\n', '\r' };
-            byte[] outString;
 
             String[] command_words = m_cmd.Split(DELIMS);
             if (command_words.Length <= 1)
@@ -36,14 +35,10 @@ namespace AgDroneCtrl
                 return;
             }
 
-            outString = System.Text.Encoding.ASCII.GetBytes("logdata " + command_words[1] + "\n");
+            Console.WriteLine("Sending logdata command: logdata {0}", command_words[1]);
+            m_agdrone.WriteString("logdata " + command_words[1] + "\n");
 
-            Console.WriteLine("Sending logdata command: {0}", outString);
-
-            m_socket.Write(outString, 0, outString.Length);
-            m_socket.Flush();
-
-            var getFile = new GetFile("", m_socket);
+            var getFile = new GetFile("", m_agdrone);
             while (!getFile.IsFinished())
             {
                 Thread.Sleep(100);
@@ -54,7 +49,7 @@ namespace AgDroneCtrl
         protected bool GetLogEntry(String id)
         {
             String entry_cmd = String.Format("loglist {0}", id);
-            m_log_entry = new LogListCmd(entry_cmd, m_socket);
+            m_log_entry = new LogListCmd(entry_cmd, m_agdrone);
 
             while (!m_log_entry.IsFinished() && !m_log_entry.MayBeHung())
             {

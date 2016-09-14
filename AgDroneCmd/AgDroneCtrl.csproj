@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Command.cs" />
+    <Compile Include="ComStream.cs" />
     <Compile Include="DataFlashCmd.cs" />
     <Compile Include="GetFile.cs" />
     <Compile Include="GetTLogsCmd.cs" />

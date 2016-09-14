@@ -11,9 +11,10 @@ namespace AgDroneCtrl
 {
     public class GetFile : Command
     {
-        public GetFile(string cmd, NetworkStream socket)
-            : base(cmd, socket)
+        public GetFile(string cmd, ComStream agdrone)
+            : base(cmd, agdrone)
         {
+            Console.WriteLine("Getting a file");
             m_expected_duration = 60;
             m_expectedSize = -1;
             m_fileName = null;
@@ -38,8 +39,7 @@ namespace AgDroneCtrl
 
             while (line_words.Length < 2 ||  m_expectedSize < 0 || m_fileName == null)
             {
-                line = ReadLine();
-                Console.WriteLine("Read: {0}", line);
+                line = m_agdrone.ReadLine();
                 line_words = line.Split(DELIMS);
                 if (line_words[0].Equals("filesize"))
                 {
@@ -93,11 +93,11 @@ namespace AgDroneCtrl
             byte[] fileMD5Sum = sum.ComputeHash(stream);
             string fileMD5String = hashString(fileMD5Sum); // System.Text.Encoding.UTF8.GetString(fileMD5Sum, 0, fileMD5Sum.Length);
             Console.WriteLine("MD5 sum: {0}", fileMD5String);
+            stream.Close();
 
             while (line_words.Length < 2 || !line_words[0].Equals("md5sum"))
             {
-                line = ReadLine();
-                Console.WriteLine("Read: {0}", line);
+                line = m_agdrone.ReadLine();
                 line_words = line.Split(DELIMS);
             }
 

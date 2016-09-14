@@ -10,8 +10,8 @@ namespace AgDroneCtrl
 {
     public class LogListCmd : Command
     {
-        public LogListCmd(string cmd, NetworkStream socket)
-            : base(cmd, socket)
+        public LogListCmd(string cmd, ComStream agdrone)
+            : base(cmd, agdrone)
         {
             m_expected_duration = 10;
             m_entries = new List<LogEntry>();
@@ -21,18 +21,15 @@ namespace AgDroneCtrl
         {
             String line = "";
             char[] DELIMS = { ' ', '\n', '\r' };
-            byte[] outString;
 
             String[] command_words = m_cmd.Split(DELIMS);
             if (command_words.Length > 1)
-                outString = System.Text.Encoding.ASCII.GetBytes("loglist " + command_words[1] + "\n");
+                m_agdrone.WriteString("loglist " + command_words[1] + "\n");
             else
-                outString = System.Text.Encoding.ASCII.GetBytes("loglist\n");
+                m_agdrone.WriteString("loglist\n");
 
-            m_socket.Write(outString, 0, outString.Length);
-            m_socket.Flush();
             
-            line = ReadLine();
+            line = m_agdrone.ReadLine();
 
             while (!line.Equals("LogEntryDone"))
             {
@@ -50,7 +47,7 @@ namespace AgDroneCtrl
                     
                     m_entries.Add(log_entry);
                 }
-                line = ReadLine();
+                line = m_agdrone.ReadLine();
             }
         }
 
